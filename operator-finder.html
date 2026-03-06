@@ -6,6 +6,7 @@
   <title>Operator Finder — BetMatch</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+  <script src="nav.js"></script>
   <style>
     :root {
       --bg:     #07071a;
@@ -48,39 +49,6 @@
     @keyframes twinkle {
       0%,100% { opacity: 0.06; }
       50%      { opacity: 0.4; }
-    }
-
-    /* ── NAV ── */
-    nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-      height: 60px; padding: 0 28px;
-      display: flex; align-items: center; justify-content: space-between;
-      background: rgba(7,7,26,0.75);
-      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-      border-bottom: 1px solid var(--border);
-    }
-    .nav-logo {
-      font-family: 'Bebas Neue', sans-serif; font-size: 1.45rem; letter-spacing: 0.05em;
-      background: linear-gradient(135deg, var(--pink), var(--cyan));
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-    }
-    .nav-links { display: flex; align-items: center; gap: 24px; }
-    .nav-link { font-size: 0.83rem; font-weight: 500; color: var(--muted); transition: color 0.2s; }
-    .nav-link:hover { color: #fff; }
-    .nav-link.active { color: #fff; }
-    .nav-cta {
-      background: linear-gradient(135deg, var(--cyan), #0099cc);
-      border: none; border-radius: 9px;
-      padding: 8px 18px;
-      color: #07071a; font-family: 'Inter', sans-serif;
-      font-size: 0.83rem; font-weight: 700; letter-spacing: 0.05em;
-      cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
-      box-shadow: 0 0 20px rgba(0,245,255,0.25);
-    }
-    .nav-cta:hover { transform: translateY(-2px); box-shadow: 0 0 36px rgba(0,245,255,0.45); }
-    @media (max-width: 600px) {
-      .nav-links .nav-link { display: none; }
-      nav { padding: 0 18px; }
     }
 
     /* ── PAGE WRAPPER ── */
@@ -396,16 +364,6 @@
 <div class="blobs"></div>
 <div id="stars"></div>
 
-<!-- NAV -->
-<nav>
-  <a href="index.html" class="nav-logo">BetMatch</a>
-  <div class="nav-links">
-    <a href="index.html" class="nav-link">Home</a>
-    <a href="operator-finder.html" class="nav-link active">Operator Finder</a>
-    <a href="which-betting-operator-are-you.html" class="nav-link">Fun Quiz</a>
-    <a href="operator-finder.html" class="nav-cta">Find My Operator &rarr;</a>
-  </div>
-</nav>
 
 <!-- PAGE -->
 <div class="page">
