@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Operator Finder — BetMatch</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:     #07071a;
+      --card:   #0d0d2b;
+      --border: rgba(255,255,255,0.07);
+      --muted:  #777799;
+      --pink:   #ff2d78;
+      --cyan:   #00f5ff;
+      --gold:   #ffd700;
+      --purple: #a78bfa;
+      --green:  #4ade80;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: #fff;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── Blobs ── */
+    .blobs {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background:
+        radial-gradient(ellipse at 15% 40%,  rgba(0,245,255,0.06)   0%, transparent 55%),
+        radial-gradient(ellipse at 85% 20%,  rgba(255,45,120,0.06)  0%, transparent 55%),
+        radial-gradient(ellipse at 50% 85%,  rgba(167,139,250,0.05) 0%, transparent 50%);
+    }
+
+    /* ── Stars ── */
+    #stars { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+    .star {
+      position: absolute; background: #fff; border-radius: 50%;
+      animation: twinkle var(--dur) ease-in-out infinite var(--delay);
+    }
+    @keyframes twinkle {
+      0%,100% { opacity: 0.06; }
+      50%      { opacity: 0.4; }
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      height: 60px; padding: 0 28px;
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(7,7,26,0.75);
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif; font-size: 1.45rem; letter-spacing: 0.05em;
+      background: linear-gradient(135deg, var(--pink), var(--cyan));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .nav-back {
+      font-size: 0.82rem; color: var(--muted);
+      display: flex; align-items: center; gap: 6px;
+      transition: color 0.2s; cursor: pointer;
+    }
+    .nav-back:hover { color: #fff; }
+
+    /* ── PAGE WRAPPER ── */
+    .page {
+      position: relative; z-index: 1;
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 90px 20px 60px;
+    }
+
+    /* ── INTRO ── */
+    #screen-intro { text-align: center; max-width: 660px; margin: 0 auto; }
+
+    .intro-label {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(0,245,255,0.07);
+      border: 1px solid rgba(0,245,255,0.2);
+      border-radius: 99px; padding: 5px 16px;
+      font-size: 0.72rem; letter-spacing: 0.28em; text-transform: uppercase;
+      color: var(--cyan); margin-bottom: 28px;
+    }
+    #screen-intro h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.8rem, 9vw, 5.5rem);
+      line-height: 0.95; letter-spacing: 0.02em;
+      margin-bottom: 22px;
+    }
+    #screen-intro h1 .g {
+      background: linear-gradient(135deg, var(--cyan), var(--purple));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    #screen-intro p {
+      color: #9999bb; font-size: 1.05rem; line-height: 1.8;
+      max-width: 520px; margin: 0 auto 36px;
+    }
+    #screen-intro p strong { color: #fff; }
+
+    /* What the quiz covers */
+    .covers {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 10px; margin: 0 auto 36px; max-width: 480px; text-align: left;
+    }
+    .cover-item {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border); border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 0.83rem; color: var(--muted);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .cover-item span { font-size: 1rem; }
+
+    .btn-start {
+      background: linear-gradient(135deg, var(--cyan) 0%, #0099cc 100%);
+      border: none; border-radius: 13px;
+      padding: 16px 44px;
+      color: #07071a; font-family: 'Inter', sans-serif;
+      font-size: 1.05rem; font-weight: 800; letter-spacing: 0.05em;
+      cursor: pointer; display: inline-block;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 0 40px rgba(0,245,255,0.3);
+    }
+    .btn-start:hover { transform: translateY(-3px); box-shadow: 0 0 60px rgba(0,245,255,0.5); }
+
+    .intro-meta {
+      margin-top: 18px;
+      display: flex; flex-wrap: wrap; gap: 16px; justify-content: center;
+      font-size: 0.8rem; color: var(--muted);
+    }
+    .intro-meta span { display: flex; align-items: center; gap: 6px; }
+    .dot-cyan { width: 5px; height: 5px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 6px var(--cyan); }
+
+    /* ── QUIZ ── */
+    #screen-quiz { display: none; width: 100%; max-width: 700px; margin: 0 auto; }
+
+    /* Progress */
+    .prog-wrap { margin-bottom: 36px; }
+    .prog-meta {
+      display: flex; justify-content: space-between;
+      font-size: 0.78rem; color: var(--muted); margin-bottom: 8px;
+    }
+    .prog-meta strong { color: #fff; }
+    .prog-track {
+      background: rgba(255,255,255,0.07); border-radius: 99px; height: 4px; overflow: hidden;
+    }
+    .prog-fill {
+      height: 100%; border-radius: 99px;
+      background: linear-gradient(90deg, var(--cyan), var(--purple));
+      box-shadow: 0 0 10px rgba(0,245,255,0.4);
+      transition: width 0.4s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    /* Question card */
+    .q-card {
+      background: var(--card);
+      border: 1px solid var(--border); border-radius: 22px;
+      padding: 40px 36px 32px;
+      box-shadow: 0 0 60px rgba(0,245,255,0.04), 0 0 120px rgba(255,45,120,0.03);
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+    .q-card.exit { opacity: 0; transform: translateX(-16px); }
+    .q-card.enter { opacity: 0; transform: translateX(16px); }
+
+    .q-tag {
+      font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.28em;
+      color: var(--cyan); margin-bottom: 10px;
+    }
+    .q-text {
+      font-size: clamp(1.05rem, 2.5vw, 1.3rem);
+      font-weight: 700; line-height: 1.45; margin-bottom: 8px;
+    }
+    .q-hint {
+      font-size: 0.85rem; color: var(--muted); font-style: italic;
+      margin-bottom: 24px; line-height: 1.5;
+    }
+
+    /* Options */
+    .opts { display: grid; gap: 10px; }
+    .opt {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08); border-radius: 13px;
+      padding: 14px 18px;
+      cursor: pointer; text-align: left;
+      color: #fff; font-family: 'Inter', sans-serif; font-size: 0.93rem; line-height: 1.55;
+      display: flex; align-items: flex-start; gap: 13px;
+      transition: background 0.16s, border-color 0.16s, transform 0.16s;
+    }
+    .opt:hover {
+      background: rgba(0,245,255,0.07);
+      border-color: rgba(0,245,255,0.35);
+      transform: translateX(4px);
+    }
+    .opt-key {
+      flex-shrink: 0; width: 27px; height: 27px; border-radius: 7px;
+      background: rgba(255,255,255,0.07);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.78rem; font-weight: 700; color: var(--cyan);
+      margin-top: 1px; transition: background 0.16s, color 0.16s;
+    }
+    .opt:hover .opt-key { background: var(--cyan); color: #07071a; }
+    .opt.selected {
+      background: rgba(0,245,255,0.08) !important;
+      border-color: var(--cyan) !important;
+      transform: translateX(4px) !important;
+    }
+    .opt.selected .opt-key { background: var(--cyan) !important; color: #07071a !important; }
+
+    /* Nav row below card */
+    .q-nav {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-top: 18px;
+    }
+    .btn-back {
+      background: transparent; border: 1px solid var(--border); border-radius: 10px;
+      padding: 9px 20px; color: var(--muted);
+      font-family: 'Inter', sans-serif; font-size: 0.85rem; font-weight: 600;
+      cursor: pointer; transition: border-color 0.2s, color 0.2s;
+    }
+    .btn-back:hover { border-color: rgba(255,255,255,0.3); color: #fff; }
+    .btn-back:disabled { opacity: 0.25; cursor: default; }
+
+    .q-dots { display: flex; gap: 6px; }
+    .q-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: rgba(255,255,255,0.15); transition: background 0.3s;
+    }
+    .q-dot.done  { background: var(--cyan); }
+    .q-dot.cur   { background: #fff; box-shadow: 0 0 6px rgba(255,255,255,0.4); }
+
+    /* ── RESULT ── */
+    #screen-result { display: none; width: 100%; max-width: 720px; margin: 0 auto; }
+    #screen-result.show { display: block; animation: riseIn 0.5s cubic-bezier(0.22,1,0.36,1) forwards; }
+    @keyframes riseIn {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .result-card {
+      background: var(--card);
+      border: 1px solid var(--border); border-radius: 24px;
+      padding: 44px 40px; text-align: center;
+      position: relative; overflow: hidden;
+    }
+    .result-card::before {
+      content: ''; position: absolute; inset: 0; pointer-events: none;
+      background:
+        radial-gradient(ellipse at 30% 20%, rgba(0,245,255,0.07) 0%, transparent 60%),
+        radial-gradient(ellipse at 70% 80%, rgba(167,139,250,0.06) 0%, transparent 60%);
+    }
+
+    .match-badge {
+      display: inline-block;
+      padding: 4px 14px; border-radius: 99px;
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+      margin-bottom: 20px;
+      opacity: 0; animation: fadeUp 0.4s ease 0.1s forwards;
+    }
+
+    .result-emoji {
+      font-size: 4.5rem; display: block; margin-bottom: 14px;
+      opacity: 0; animation: popIn 0.65s cubic-bezier(0.36,0.07,0.19,0.97) 0.15s forwards;
+    }
+    @keyframes popIn {
+      0%   { transform: scale(0) rotate(-12deg); opacity: 0; }
+      65%  { transform: scale(1.2) rotate(4deg);  opacity: 1; }
+      82%  { transform: scale(0.92) rotate(-2deg); }
+      100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+
+    .result-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.2rem, 7vw, 3.6rem); line-height: 1;
+      margin-bottom: 6px;
+      opacity: 0; animation: fadeUp 0.4s ease 0.35s forwards;
+    }
+    .result-tagline {
+      font-size: 0.95rem; font-style: italic; margin-bottom: 28px;
+      opacity: 0; animation: fadeUp 0.4s ease 0.45s forwards;
+    }
+
+    .result-desc {
+      font-size: 0.97rem; color: #9999bb; line-height: 1.85;
+      max-width: 560px; margin: 0 auto 36px; text-align: left;
+      opacity: 0; animation: fadeUp 0.4s ease 0.55s forwards;
+    }
+
+    /* Strengths */
+    .strengths-wrap {
+      text-align: left; margin-bottom: 36px;
+      opacity: 0; animation: fadeUp 0.4s ease 0.65s forwards;
+    }
+    .strengths-label {
+      font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.28em;
+      color: var(--muted); margin-bottom: 12px;
+    }
+    .strength-item {
+      display: flex; align-items: flex-start; gap: 10px;
+      font-size: 0.9rem; color: #cccce0; line-height: 1.5;
+      padding: 9px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .strength-item:last-child { border-bottom: none; }
+    .strength-check {
+      flex-shrink: 0; width: 20px; height: 20px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.65rem; margin-top: 1px; font-weight: 700;
+    }
+
+    /* Score breakdown */
+    .breakdown-wrap {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06); border-radius: 16px;
+      padding: 24px 22px; margin-bottom: 36px; text-align: left;
+      opacity: 0; animation: fadeUp 0.4s ease 0.75s forwards;
+    }
+    .breakdown-label {
+      font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.28em;
+      color: var(--muted); margin-bottom: 18px;
+    }
+    .bar-row {
+      display: grid; grid-template-columns: 130px 1fr 38px;
+      align-items: center; gap: 12px; margin-bottom: 12px;
+    }
+    .bar-row:last-child { margin-bottom: 0; }
+    .bar-label { font-size: 0.84rem; font-weight: 600; display: flex; align-items: center; gap: 7px; }
+    .bar-track {
+      background: rgba(255,255,255,0.07); border-radius: 99px; height: 8px; overflow: hidden;
+    }
+    .bar-fill {
+      height: 100%; border-radius: 99px; width: 0;
+      transition: width 0.9s cubic-bezier(0.4,0,0.2,1);
+    }
+    .bar-pct { font-size: 0.8rem; font-weight: 700; text-align: right; }
+
+    /* Restart */
+    .btn-restart {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.18); border-radius: 13px;
+      padding: 13px 36px; color: rgba(255,255,255,0.7);
+      font-family: 'Inter', sans-serif; font-size: 0.95rem; font-weight: 600;
+      cursor: pointer; transition: border-color 0.2s, color 0.2s;
+      opacity: 0; animation: fadeUp 0.4s ease 0.85s forwards;
+    }
+    .btn-restart:hover { border-color: var(--cyan); color: var(--cyan); }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Operator colour themes ── */
+    .t-valueedge   { --accent: var(--cyan);   }
+    .t-flexbet     { --accent: var(--pink);   }
+    .t-bonusboosters { --accent: var(--gold); }
+    .t-elitestake  { --accent: var(--purple); }
+
+    .result-name { color: var(--accent); }
+    .result-tagline { color: var(--accent); opacity: 0.8; }
+    .match-badge { background: color-mix(in srgb, var(--accent) 15%, transparent); color: var(--accent); border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent); }
+    .strength-check { background: color-mix(in srgb, var(--accent) 18%, transparent); color: var(--accent); }
+
+    /* ── Responsive ── */
+    @media (max-width: 600px) {
+      .q-card { padding: 28px 20px 24px; }
+      .result-card { padding: 32px 20px; }
+      .bar-row { grid-template-columns: 110px 1fr 34px; gap: 8px; }
+      .covers { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="blobs"></div>
+<div id="stars"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">BetMatch</a>
+  <a href="index.html" class="nav-back">&#8592; Back to home</a>
+</nav>
+
+<!-- PAGE -->
+<div class="page">
+
+  <!-- INTRO -->
+  <div id="screen-intro">
+    <p class="intro-label">Operator Finder</p>
+    <h1>Find Your<br><span class="g">Perfect Match</span></h1>
+    <p>
+      Answer 10 honest questions about how you actually bet. We'll match you with the operator best suited to your style — covering odds, app experience, bonuses, limits, and more.
+    </p>
+    <div class="covers">
+      <div class="cover-item"><span>📊</span> Odds &amp; value</div>
+      <div class="cover-item"><span>📱</span> App &amp; features</div>
+      <div class="cover-item"><span>🎁</span> Bonuses &amp; promos</div>
+      <div class="cover-item"><span>👑</span> Limits &amp; withdrawals</div>
+      <div class="cover-item"><span>⚡</span> Live betting</div>
+      <div class="cover-item"><span>🛡️</span> Responsible tools</div>
+    </div>
+    <button class="btn-start" onclick="startQuiz()">Start the Finder &rarr;</button>
+    <div class="intro-meta">
+      <span><div class="dot-cyan"></div> 10 questions</span>
+      <span><div class="dot-cyan"></div> ~3 minutes</span>
+      <span><div class="dot-cyan"></div> No sign-up</span>
+      <span><div class="dot-cyan"></div> See your full profile breakdown</span>
+    </div>
+  </div>
+
+  <!-- QUIZ -->
+  <div id="screen-quiz">
+    <div class="prog-wrap">
+      <div class="prog-meta">
+        <span>Question <strong id="qNum">1</strong> of <strong>10</strong></span>
+        <span id="qPct">0%</span>
+      </div>
+      <div class="prog-track">
+        <div class="prog-fill" id="progFill" style="width:0%"></div>
+      </div>
+    </div>
+
+    <div class="q-card" id="qCard">
+      <p class="q-tag" id="qTag">Question 1</p>
+      <p class="q-text" id="qText"></p>
+      <p class="q-hint" id="qHint"></p>
+      <div class="opts" id="opts"></div>
+    </div>
+
+    <div class="q-nav">
+      <button class="btn-back" id="btnBack" onclick="goBack()" disabled>&#8592; Back</button>
+      <div class="q-dots" id="qDots"></div>
+      <div style="width:80px"></div>
+    </div>
+  </div>
+
+  <!-- RESULT -->
+  <div id="screen-result">
+    <div class="result-card" id="resultCard">
+      <div class="match-badge" id="matchBadge"></div>
+      <span class="result-emoji" id="rEmoji"></span>
+      <h2 class="result-name" id="rName"></h2>
+      <p class="result-tagline" id="rTagline"></p>
+
+      <p class="result-desc" id="rDesc"></p>
+
+      <div class="strengths-wrap">
+        <p class="strengths-label">Why it fits you</p>
+        <div id="strengthsList"></div>
+      </div>
+
+      <div class="breakdown-wrap">
+        <p class="breakdown-label">Your Operator Compatibility Breakdown</p>
+        <div id="breakdownBars"></div>
+      </div>
+
+      <button class="btn-restart" onclick="restartQuiz()">&#8592; Retake the Finder</button>
+    </div>
+  </div>
+
+</div><!-- /page -->
+
+<script>
+  /* ── Stars ── */
+  const starsEl = document.getElementById('stars');
+  for (let i = 0; i < 80; i++) {
+    const el = document.createElement('div');
+    el.className = 'star';
+    const sz = Math.random() * 1.8 + 0.8;
+    el.style.cssText = `width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;--dur:${(Math.random()*3+2).toFixed(1)}s;--delay:-${(Math.random()*5).toFixed(1)}s`;
+    starsEl.appendChild(el);
+  }
+
+  /* ── Operators ── */
+  // Score indices: [ValueEdge, FlexBet, BonusBoosters, EliteStake]
+  const OPERATORS = [
+    {
+      id: 'valueedge',
+      theme: 't-valueedge',
+      emoji: '📊',
+      name: 'ValueEdge Sports',
+      tagline: 'Built for bettors who know the difference between a price and a value.',
+      badge: 'Your Match — Value Hunter',
+      color: '#00f5ff',
+      strengths: [
+        'Accepts winning customers — no account restrictions for profiting',
+        'Consistently sharp odds and low margins across all major markets',
+        'Deep form guides, stats tools and market movement data built in',
+        'Widest range of niche sports and international markets in the comparison'
+      ],
+      desc: `ValueEdge Sports was built for one type of bettor: the one who does the homework. If you approach betting as a discipline — studying form, tracking line movement, hunting out edges — this is your platform. ValueEdge is known in the industry for two things: offering some of the best prices in the market, and not penalising you when you win. No sudden stake limitations. No account reviews after a winning run. Just competitive odds, a clean and functional interface, and the market depth that serious bettors actually need. If you're chasing value and tired of platforms that treat a winning streak as a problem to fix, you've found your home.`
+    },
+    {
+      id: 'flexbet',
+      theme: 't-flexbet',
+      emoji: '📱',
+      name: 'FlexBet Pro',
+      tagline: 'Everything you need, wherever you are, the moment it matters.',
+      badge: 'Your Match — All-Rounder',
+      color: '#ff2d78',
+      strengths: [
+        'Award-winning mobile app with best-in-class live betting interface',
+        'One-tap cash out available on all supported markets',
+        'Deep football coverage with extensive in-play markets and stats',
+        '24/7 live chat support that actually resolves issues quickly'
+      ],
+      desc: `FlexBet Pro is the smart choice for the modern, engaged bettor who wants the full package to simply work. The mobile app is consistently rated among the best in the industry — fast, reliable, and built entirely around the in-play experience. Whether you're backing the next goalscorer from the sofa or cashing out a winning acca on the commute home, FlexBet Pro keeps up with you. Odds are competitive without being the very sharpest in the market, but the overall package — app quality, live markets, cash out reliability and a solid weekly promotions calendar — makes it the strongest all-round option for most bettors who value experience over marginal edge.`
+    },
+    {
+      id: 'bonusboosters',
+      theme: 't-bonusboosters',
+      emoji: '🎁',
+      name: 'BonusBoosters',
+      tagline: 'Every bet. Every week. Always something extra.',
+      badge: 'Your Match — Bonus-First Bettor',
+      color: '#ffd700',
+      strengths: [
+        'Industry-leading welcome offer with realistic, achievable wagering terms',
+        'Weekly free bets, acca insurance and enhanced odds as standard features',
+        'Tiered loyalty programme delivering real rewards at every level',
+        'Broad sports and casino offering if you like to mix it up'
+      ],
+      desc: `BonusBoosters understands that for many bettors, the platform experience is about more than the raw odds — it's about feeling rewarded every time you engage. Their ongoing promotions programme is among the most generous in the market: regular free bets, weekend enhanced odds, acca insurance as standard, and a tiered loyalty scheme that delivers tangible value without demanding you climb mountains to get there. Base odds sit slightly below the very sharpest, but when you factor in consistent bonus returns week over week, the effective value often competes. The right fit for recreational bettors who bet on weekends and big events, and want the whole experience to feel like it's working in their favour.`
+    },
+    {
+      id: 'elitestake',
+      theme: 't-elitestake',
+      emoji: '👑',
+      name: 'EliteStake',
+      tagline: 'No limits. No delays. No compromises.',
+      badge: 'Your Match — Serious/High-Volume',
+      color: '#a78bfa',
+      strengths: [
+        'Among the highest maximum stakes available on the UK market',
+        'Dedicated VIP account manager from day one, not just above a tier',
+        'Same-day withdrawals processed as standard across all payment methods',
+        'Best price guarantee and deepest ante-post markets on horse racing'
+      ],
+      desc: `EliteStake was designed for the bettor who has outgrown standard platforms. If you're operating at real volume, betting horse racing at meaningful stakes, or simply tired of platforms that treat serious money as an inconvenience to be managed, EliteStake is built for you. Maximum limits sit among the highest in the market, withdrawals are processed same-day as standard, and every customer — not just top-tier VIPs — gets a dedicated account manager who actually knows the product. Horse racing specialists will find the deepest ante-post coverage and industry-leading best price guarantees. If you've spent too long fighting your own platform, this is the upgrade.`
+    }
+  ];
+
+  /* ── Questions ── */
+  // scores: [ValueEdge, FlexBet, BonusBoosters, EliteStake]
+  const QUESTIONS = [
+    {
+      text: "What do you primarily bet on?",
+      hint: "Think about where you spend most of your time and money.",
+      opts: [
+        { text: "Football and major European leagues",              scores: [0, 3, 1, 0] },
+        { text: "Horse racing — UK, Irish, and international",     scores: [0, 0, 0, 3] },
+        { text: "A wide mix, always hunting the best price",       scores: [3, 0, 0, 1] },
+        { text: "Sports and casino games equally",                 scores: [0, 0, 3, 0] }
+      ]
+    },
+    {
+      text: "How often do you place a bet?",
+      hint: "Your typical week during a busy football or racing season.",
+      opts: [
+        { text: "Multiple times a day — I'm always watching something", scores: [1, 2, 0, 1] },
+        { text: "A few times a week, I pick my spots carefully",         scores: [2, 1, 0, 1] },
+        { text: "Mainly weekends and big events",                        scores: [0, 0, 3, 0] },
+        { text: "Whenever I identify genuine value — frequency varies",  scores: [3, 0, 0, 0] }
+      ]
+    },
+    {
+      text: "What's your typical stake per bet?",
+      hint: "Your average bet, not your biggest one-off or your smallest flutter.",
+      opts: [
+        { text: "£1–5 — I keep it fun and low-risk",          scores: [0, 1, 3, 0] },
+        { text: "£5–25 — I think carefully about each bet",   scores: [1, 2, 0, 1] },
+        { text: "£25–100 — I back my research properly",      scores: [2, 0, 0, 1] },
+        { text: "£100 or more — I bet at genuine volume",     scores: [0, 0, 0, 3] }
+      ]
+    },
+    {
+      text: "Which platform feature matters most to you?",
+      hint: "The one thing you'd miss immediately if it was suddenly gone.",
+      opts: [
+        { text: "Getting the best available odds every single time",      scores: [3, 0, 0, 1] },
+        { text: "A fast, reliable app with excellent live betting",        scores: [0, 3, 0, 0] },
+        { text: "Regular bonuses, free bets and ongoing promotions",      scores: [0, 0, 3, 0] },
+        { text: "High limits, VIP treatment and fast, guaranteed payouts", scores: [0, 0, 0, 3] }
+      ]
+    },
+    {
+      text: "How important is in-play (live) betting to you?",
+      hint: "Be honest — do you actively use it, or is it just there in case?",
+      opts: [
+        { text: "It's the main way I bet — I rarely place pre-match",   scores: [0, 3, 0, 0] },
+        { text: "I use it regularly alongside pre-match bets",           scores: [1, 2, 0, 0] },
+        { text: "Occasionally, when the right situation presents itself", scores: [2, 1, 0, 0] },
+        { text: "Rarely — I research and back my views pre-match",       scores: [1, 0, 1, 2] }
+      ]
+    },
+    {
+      text: "How do you think about bonuses and promotions?",
+      hint: "Honestly — how much do they influence where you actually bet?",
+      opts: [
+        { text: "A major factor — I actively compare offers before committing",    scores: [0, 0, 3, 0] },
+        { text: "Nice to have, but odds quality always comes first for me",         scores: [3, 0, 0, 0] },
+        { text: "I want a proper loyalty programme that rewards long-term play",    scores: [0, 1, 1, 2] },
+        { text: "I barely look at them — just give me a clean, functional platform", scores: [1, 2, 0, 1] }
+      ]
+    },
+    {
+      text: "What would frustrate you most about a betting platform?",
+      hint: "The thing that would make you close the app and never go back.",
+      opts: [
+        { text: "Getting my account restricted or limited for winning too consistently", scores: [3, 0, 0, 1] },
+        { text: "A slow, buggy app that fails me in the middle of a live game",          scores: [0, 3, 0, 0] },
+        { text: "Stingy bonuses loaded with confusing, punishing wagering requirements", scores: [0, 0, 3, 0] },
+        { text: "Being told I can't place the stake I want on a market I've researched", scores: [0, 0, 0, 3] }
+      ]
+    },
+    {
+      text: "What's your approach to accumulator bets?",
+      hint: "How you actually build your typical betting slip.",
+      opts: [
+        { text: "Love a big acca — the potential return is half the appeal",         scores: [0, 1, 2, 0] },
+        { text: "I build accas but need acca insurance to make the maths work",      scores: [0, 2, 1, 0] },
+        { text: "I prefer singles — more control, more clarity on the edge",         scores: [3, 0, 0, 0] },
+        { text: "I build large, well-researched accas at meaningful stakes",          scores: [0, 0, 0, 3] }
+      ]
+    },
+    {
+      text: "How quickly do you expect your withdrawals?",
+      hint: "When you click withdraw, what's your minimum expectation?",
+      opts: [
+        { text: "Same day — anything longer is no longer acceptable in 2024",  scores: [0, 0, 0, 3] },
+        { text: "Within 24 hours is fine for my needs",                         scores: [0, 2, 1, 0] },
+        { text: "A couple of days is perfectly reasonable to me",               scores: [1, 0, 2, 0] },
+        { text: "I rarely withdraw — I keep funds rolling on the account",      scores: [2, 0, 0, 1] }
+      ]
+    },
+    {
+      text: "How do you typically research a bet before placing it?",
+      hint: "Your actual process — not the ideal one.",
+      opts: [
+        { text: "Detailed — form guides, stats databases, historical data, line movement", scores: [3, 0, 0, 1] },
+        { text: "I watch the game and form a view, then bet live as it unfolds",            scores: [0, 3, 0, 0] },
+        { text: "I follow a few trusted tipsters or community picks I rate",                scores: [0, 1, 2, 0] },
+        { text: "A combination of data, industry contacts and experience built over years", scores: [1, 0, 0, 2] }
+      ]
+    }
+  ];
+
+  /* ── State ── */
+  let current    = 0;
+  let answers    = new Array(QUESTIONS.length).fill(null); // stores selected opt index
+  let scores     = [0, 0, 0, 0];
+
+  /* ── Helpers ── */
+  function maxPossible(opIdx) {
+    return QUESTIONS.reduce((sum, q) => sum + Math.max(...q.opts.map(o => o.scores[opIdx])), 0);
+  }
+
+  function recalcScores() {
+    scores = [0, 0, 0, 0];
+    answers.forEach((ans, qi) => {
+      if (ans !== null) {
+        QUESTIONS[qi].opts[ans].scores.forEach((v, oi) => scores[oi] += v);
+      }
+    });
+  }
+
+  /* ── Start ── */
+  function startQuiz() {
+    document.getElementById('screen-intro').style.display = 'none';
+    document.getElementById('screen-quiz').style.display  = 'block';
+    buildDots();
+    renderQ();
+  }
+
+  /* ── Dot indicators ── */
+  function buildDots() {
+    const wrap = document.getElementById('qDots');
+    wrap.innerHTML = '';
+    QUESTIONS.forEach((_, i) => {
+      const d = document.createElement('div');
+      d.className = 'q-dot';
+      d.id = `dot-${i}`;
+      wrap.appendChild(d);
+    });
+  }
+
+  function updateDots() {
+    QUESTIONS.forEach((_, i) => {
+      const d = document.getElementById(`dot-${i}`);
+      if (!d) return;
+      d.className = 'q-dot' + (i < current ? ' done' : i === current ? ' cur' : '');
+    });
+  }
+
+  /* ── Render question ── */
+  function renderQ(direction = 1) {
+    const q     = QUESTIONS[current];
+    const total = QUESTIONS.length;
+    const pct   = Math.round((current / total) * 100);
+
+    document.getElementById('qNum').textContent    = current + 1;
+    document.getElementById('qPct').textContent    = `${pct}%`;
+    document.getElementById('progFill').style.width = `${pct}%`;
+    document.getElementById('qTag').textContent    = `Question ${current + 1} of ${total}`;
+    document.getElementById('qText').textContent   = q.text;
+    document.getElementById('qHint').textContent   = q.hint;
+    document.getElementById('btnBack').disabled    = current === 0;
+
+    updateDots();
+
+    const grid   = document.getElementById('opts');
+    grid.innerHTML = '';
+    const keys = ['A','B','C','D'];
+    q.opts.forEach((opt, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'opt' + (answers[current] === i ? ' selected' : '');
+      btn.innerHTML = `<span class="opt-key">${keys[i]}</span><span>${opt.text}</span>`;
+      btn.onclick   = () => selectAnswer(i, btn);
+      grid.appendChild(btn);
+    });
+
+    // Entrance animation
+    const card = document.getElementById('qCard');
+    card.style.opacity   = '0';
+    card.style.transform = `translateX(${direction > 0 ? '16px' : '-16px'})`;
+    requestAnimationFrame(() => {
+      card.style.transition = 'opacity 0.25s ease, transform 0.25s ease';
+      card.style.opacity    = '1';
+      card.style.transform  = 'translateX(0)';
+    });
+  }
+
+  /* ── Select answer ── */
+  function selectAnswer(optIdx, clickedBtn) {
+    // Update visual selection
+    document.querySelectorAll('.opt').forEach(b => b.classList.remove('selected'));
+    clickedBtn.classList.add('selected');
+    answers[current] = optIdx;
+
+    // Brief pause then advance
+    setTimeout(() => {
+      if (current < QUESTIONS.length - 1) {
+        advance();
+      } else {
+        showResult();
+      }
+    }, 400);
+  }
+
+  /* ── Advance ── */
+  function advance() {
+    const card = document.getElementById('qCard');
+    card.style.transition = 'opacity 0.22s ease, transform 0.22s ease';
+    card.style.opacity    = '0';
+    card.style.transform  = 'translateX(-14px)';
+    setTimeout(() => {
+      current++;
+      card.style.transition = 'none';
+      renderQ(1);
+    }, 220);
+  }
+
+  /* ── Go back ── */
+  function goBack() {
+    if (current === 0) return;
+    const card = document.getElementById('qCard');
+    card.style.transition = 'opacity 0.22s ease, transform 0.22s ease';
+    card.style.opacity    = '0';
+    card.style.transform  = 'translateX(14px)';
+    setTimeout(() => {
+      current--;
+      card.style.transition = 'none';
+      renderQ(-1);
+    }, 220);
+  }
+
+  /* ── Show result ── */
+  function showResult() {
+    recalcScores();
+
+    // Find winner
+    let best = -1, winIdx = 0;
+    scores.forEach((s, i) => { if (s > best) { best = s; winIdx = i; } });
+
+    const op = OPERATORS[winIdx];
+    const maxW = maxPossible(winIdx);
+    const matchPct = Math.min(100, Math.round((scores[winIdx] / maxW) * 100));
+
+    // Hide quiz
+    document.getElementById('screen-quiz').style.display = 'none';
+
+    // Populate result
+    const rc = document.getElementById('resultCard');
+    rc.className = `result-card ${op.theme}`;
+
+    document.getElementById('matchBadge').textContent = op.badge;
+    document.getElementById('rEmoji').textContent      = op.emoji;
+    document.getElementById('rName').textContent       = op.name;
+    document.getElementById('rTagline').textContent    = op.tagline;
+    document.getElementById('rDesc').textContent       = op.desc;
+
+    // Strengths
+    const sl = document.getElementById('strengthsList');
+    sl.innerHTML = '';
+    op.strengths.forEach(s => {
+      const row = document.createElement('div');
+      row.className = 'strength-item';
+      row.innerHTML = `<span class="strength-check">&#10003;</span><span>${s}</span>`;
+      sl.appendChild(row);
+    });
+
+    // Breakdown bars
+    const bb = document.getElementById('breakdownBars');
+    bb.innerHTML = '';
+    const barColors = ['#00f5ff','#ff2d78','#ffd700','#a78bfa'];
+    const sorted = [0,1,2,3].sort((a,b) => scores[b] - scores[a]);
+    sorted.forEach(oi => {
+      const op2   = OPERATORS[oi];
+      const maxOi = maxPossible(oi);
+      const pct2  = Math.min(100, Math.round((scores[oi] / maxOi) * 100));
+      const row   = document.createElement('div');
+      row.className = 'bar-row';
+      row.innerHTML = `
+        <div class="bar-label" style="color:${barColors[oi]}">
+          <span>${op2.emoji}</span>
+          <span style="font-size:0.78rem;line-height:1.2">${op2.name.split(' ').slice(0,1).join('')}<br><span style="font-weight:400;color:#777799;font-size:0.72rem">${op2.name.split(' ').slice(1).join(' ')}</span></span>
+        </div>
+        <div class="bar-track">
+          <div class="bar-fill" style="background:${barColors[oi]};box-shadow:0 0 8px ${barColors[oi]}40;" data-pct="${pct2}"></div>
+        </div>
+        <div class="bar-pct" style="color:${barColors[oi]}">${pct2}%</div>
+      `;
+      bb.appendChild(row);
+    });
+
+    // Show result screen
+    const rs = document.getElementById('screen-result');
+    rs.style.display = 'block';
+    requestAnimationFrame(() => rs.classList.add('show'));
+
+    // Animate bars after a delay
+    setTimeout(() => {
+      document.querySelectorAll('.bar-fill').forEach(fill => {
+        fill.style.width = fill.dataset.pct + '%';
+      });
+    }, 900);
+  }
+
+  /* ── Restart ── */
+  function restartQuiz() {
+    current = 0;
+    answers = new Array(QUESTIONS.length).fill(null);
+    scores  = [0, 0, 0, 0];
+
+    const rs = document.getElementById('screen-result');
+    rs.classList.remove('show');
+    rs.style.display = 'none';
+
+    document.getElementById('screen-intro').style.display = 'block';
+  }
+</script>
+</body>
+</html>

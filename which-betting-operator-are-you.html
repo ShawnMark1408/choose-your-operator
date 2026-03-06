@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Which Betting Operator Are You?</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --pink:   #ff2d78;
+      --cyan:   #00f5ff;
+      --gold:   #ffd700;
+      --green:  #39ff14;
+      --purple: #a78bfa;
+      --bg:     #07071a;
+      --card:   #0d0d2b;
+      --border: rgba(255,255,255,0.08);
+      --muted:  #8888aa;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px 40px;
+      overflow-x: hidden;
+    }
+
+    /* ── Ambient background blobs ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background:
+        radial-gradient(ellipse at 15% 50%,  rgba(255,45,120,0.07)  0%, transparent 55%),
+        radial-gradient(ellipse at 85% 15%,  rgba(0,245,255,0.07)   0%, transparent 55%),
+        radial-gradient(ellipse at 50% 90%,  rgba(255,215,0,0.05)   0%, transparent 50%);
+      pointer-events: none; z-index: 0;
+    }
+
+    /* ── Suit watermarks ── */
+    body::after {
+      content: '♠ ♥ ♣ ♦';
+      position: fixed; inset: 0;
+      font-size: 9rem;
+      letter-spacing: 4rem;
+      line-height: 1.4;
+      color: rgba(255,255,255,0.02);
+      display: flex; align-items: center; justify-content: center;
+      word-spacing: 3rem;
+      pointer-events: none; z-index: 0;
+      user-select: none;
+    }
+
+    /* ── Stars ── */
+    #stars { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+    .star {
+      position: absolute;
+      background: #fff;
+      border-radius: 50%;
+      animation: twinkle var(--dur) ease-in-out infinite var(--delay);
+    }
+    @keyframes twinkle {
+      0%,100% { opacity: 0.08; transform: scale(1); }
+      50%      { opacity: 0.55; transform: scale(1.6); }
+    }
+
+    /* ── Layout ── */
+    .container {
+      max-width: 780px;
+      width: 100%;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── Site header ── */
+    #siteHeader {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+    .eyebrow {
+      font-size: 0.7rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      margin-bottom: 10px;
+    }
+    #siteHeader h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.4rem, 9vw, 4.8rem);
+      line-height: 1;
+      background: linear-gradient(135deg, var(--pink) 0%, var(--gold) 50%, var(--cyan) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 10px;
+    }
+    .header-sub { color: var(--muted); font-size: 0.95rem; }
+
+    /* ── Card ── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 44px;
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.03),
+        0 0 80px rgba(255,45,120,0.08),
+        0 0 160px rgba(0,245,255,0.04);
+    }
+
+    /* ── Intro screen ── */
+    #introScreen { text-align: center; }
+    .intro-emoji {
+      font-size: 4.5rem;
+      display: block;
+      margin-bottom: 18px;
+      animation: float 3.2s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%,100% { transform: translateY(0) rotate(-3deg); }
+      50%      { transform: translateY(-12px) rotate(3deg); }
+    }
+    #introScreen h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.1rem;
+      color: var(--gold);
+      margin-bottom: 16px;
+      letter-spacing: 0.05em;
+    }
+    #introScreen p {
+      color: var(--muted);
+      line-height: 1.8;
+      max-width: 520px;
+      margin: 0 auto 32px;
+      font-size: 0.97rem;
+    }
+    #introScreen em { color: rgba(255,255,255,0.6); font-style: italic; }
+
+    .btn-start {
+      background: linear-gradient(135deg, var(--pink) 0%, #c0006e 100%);
+      border: none;
+      border-radius: 14px;
+      padding: 17px 44px;
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 0 40px rgba(255,45,120,0.45);
+    }
+    .btn-start:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 0 60px rgba(255,45,120,0.65);
+    }
+
+    /* ── Quiz screen ── */
+    #quizScreen { display: none; }
+
+    /* Progress */
+    .progress-wrap { margin-bottom: 34px; }
+    .progress-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .progress-track {
+      background: rgba(255,255,255,0.07);
+      border-radius: 99px;
+      height: 5px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      border-radius: 99px;
+      background: linear-gradient(90deg, var(--pink), var(--cyan));
+      box-shadow: 0 0 12px rgba(0,245,255,0.4);
+      transition: width 0.45s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    /* Question */
+    .q-area {
+      transition: opacity 0.28s ease, transform 0.28s ease;
+    }
+    .q-area.exit {
+      opacity: 0;
+      transform: translateX(-18px);
+    }
+    .q-num {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.25em;
+      color: var(--pink);
+      margin-bottom: 10px;
+    }
+    .q-text {
+      font-size: clamp(1.05rem, 2.8vw, 1.35rem);
+      font-weight: 700;
+      line-height: 1.45;
+      margin-bottom: 26px;
+    }
+
+    /* Options */
+    .options { display: grid; gap: 11px; }
+    .opt-btn {
+      background: rgba(255,255,255,0.035);
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: 14px;
+      padding: 15px 18px;
+      cursor: pointer;
+      text-align: left;
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.93rem;
+      line-height: 1.55;
+      transition: background 0.18s, border-color 0.18s, transform 0.18s, box-shadow 0.18s;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .opt-btn:hover {
+      background: rgba(255,45,120,0.1);
+      border-color: var(--pink);
+      transform: translateX(5px);
+      box-shadow: 0 0 24px rgba(255,45,120,0.18);
+    }
+    .opt-letter {
+      flex-shrink: 0;
+      width: 28px; height: 28px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.07);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700;
+      font-size: 0.78rem;
+      color: var(--cyan);
+      margin-top: 1px;
+      transition: background 0.18s, color 0.18s;
+    }
+    .opt-btn:hover .opt-letter { background: var(--pink); color: #fff; }
+
+    .opt-btn.selected {
+      background: rgba(255,45,120,0.15) !important;
+      border-color: var(--pink) !important;
+      transform: translateX(5px) !important;
+    }
+    .opt-btn.selected .opt-letter {
+      background: var(--pink) !important;
+      color: #fff !important;
+    }
+
+    /* ── Result screen ── */
+    #resultScreen {
+      display: none;
+      text-align: center;
+    }
+    #resultScreen.show {
+      display: block;
+      animation: riseIn 0.55s cubic-bezier(0.22,1,0.36,1) forwards;
+    }
+    @keyframes riseIn {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .r-label {
+      font-size: 0.72rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+    .r-emoji {
+      display: block;
+      font-size: 5.5rem;
+      margin-bottom: 14px;
+      animation: popIn 0.7s cubic-bezier(0.36,0.07,0.19,0.97) forwards;
+    }
+    @keyframes popIn {
+      0%   { transform: scale(0) rotate(-15deg); opacity: 0; }
+      65%  { transform: scale(1.25) rotate(6deg); opacity: 1; }
+      82%  { transform: scale(0.88) rotate(-3deg); }
+      100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+    .r-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.2rem, 9vw, 3.8rem);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .r-tagline {
+      font-style: italic;
+      font-size: 0.98rem;
+      color: var(--cyan);
+      margin-bottom: 22px;
+      opacity: 0;
+      animation: fadeUp 0.45s ease 0.4s forwards;
+    }
+    .r-divider {
+      width: 56px; height: 3px;
+      border-radius: 99px;
+      margin: 0 auto 22px;
+      opacity: 0;
+      animation: fadeUp 0.45s ease 0.52s forwards;
+    }
+    .r-desc {
+      font-size: 0.97rem;
+      line-height: 1.85;
+      color: #9999bb;
+      max-width: 560px;
+      margin: 0 auto 28px;
+      opacity: 0;
+      animation: fadeUp 0.45s ease 0.64s forwards;
+    }
+    .r-badge {
+      display: inline-block;
+      padding: 5px 16px;
+      border-radius: 99px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 36px;
+      opacity: 0;
+      animation: fadeUp 0.45s ease 0.76s forwards;
+    }
+    .btn-restart {
+      background: transparent;
+      border: 2px solid rgba(255,255,255,0.18);
+      border-radius: 14px;
+      padding: 14px 36px;
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.97rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s, box-shadow 0.2s;
+      opacity: 0;
+      animation: fadeUp 0.45s ease 0.88s forwards;
+    }
+    .btn-restart:hover {
+      border-color: var(--cyan);
+      color: var(--cyan);
+      box-shadow: 0 0 24px rgba(0,245,255,0.18);
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Operator colour themes ── */
+    /* BetBlast 3000 */
+    .t-betblast .r-name {
+      background: linear-gradient(135deg, var(--pink), #ff6b35);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .t-betblast .r-tagline { color: #ff8055; }
+    .t-betblast .r-divider { background: linear-gradient(90deg, var(--pink), #ff6b35); }
+    .t-betblast .r-badge   { background: rgba(255,45,120,0.18); color: var(--pink); border: 1px solid rgba(255,45,120,0.35); }
+
+    /* OddsWhisper */
+    .t-oddswhisper .r-name {
+      background: linear-gradient(135deg, var(--purple), #60a5fa);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .t-oddswhisper .r-tagline { color: #93c5fd; }
+    .t-oddswhisper .r-divider { background: linear-gradient(90deg, var(--purple), #60a5fa); }
+    .t-oddswhisper .r-badge   { background: rgba(167,139,250,0.18); color: var(--purple); border: 1px solid rgba(167,139,250,0.35); }
+
+    /* QuickQuid */
+    .t-quickquid .r-name {
+      background: linear-gradient(135deg, var(--gold), #ff8c00);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .t-quickquid .r-tagline { color: var(--gold); }
+    .t-quickquid .r-divider { background: linear-gradient(90deg, var(--gold), #ff8c00); }
+    .t-quickquid .r-badge   { background: rgba(255,215,0,0.14); color: var(--gold); border: 1px solid rgba(255,215,0,0.35); }
+
+    /* SafeBet Gary */
+    .t-gary .r-name {
+      background: linear-gradient(135deg, #4ade80, #06b6d4);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .t-gary .r-tagline { color: #4ade80; }
+    .t-gary .r-divider { background: linear-gradient(90deg, #4ade80, #06b6d4); }
+    .t-gary .r-badge   { background: rgba(74,222,128,0.14); color: #4ade80; border: 1px solid rgba(74,222,128,0.35); }
+
+    /* ── Confetti ── */
+    .confetti {
+      position: fixed;
+      top: -12px;
+      border-radius: 2px;
+      pointer-events: none;
+      animation: confettiFall linear forwards;
+    }
+    @keyframes confettiFall {
+      0%   { transform: translateY(0)     rotate(0deg);   opacity: 1; }
+      100% { transform: translateY(105vh) rotate(760deg); opacity: 0; }
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 580px) {
+      .card { padding: 28px 18px; }
+      .btn-start { padding: 15px 32px; font-size: 0.97rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="stars"></div>
+
+<div class="container">
+
+  <div id="siteHeader">
+    <p class="eyebrow">The Definitive Personality Test</p>
+    <h1>Which Betting Operator Are You?</h1>
+    <p class="header-sub">8 questions &middot; 4 destinies &middot; zero actual gambling involved</p>
+  </div>
+
+  <div class="card">
+
+    <!-- INTRO -->
+    <div id="introScreen">
+      <span class="intro-emoji">🎰</span>
+      <h2>FIND YOUR OPERATOR SPIRIT</h2>
+      <p>
+        Are you the unhinged chaos of a 47-bonus welcome offer? The mysterious
+        sophistication of suspiciously good odds? The raw, unfiltered energy of
+        a tiger mascot? Or the deeply anxious energy of a man named Gary who
+        just wants everyone to bet responsibly?
+        <br><br>
+        <em>There are no wrong answers. Well. There might be one or two.</em>
+      </p>
+      <button class="btn-start" onclick="startQuiz()">BEGIN THE JOURNEY &rarr;</button>
+    </div>
+
+    <!-- QUIZ -->
+    <div id="quizScreen">
+      <div class="progress-wrap">
+        <div class="progress-meta">
+          <span id="progLabel">Question 1 of 8</span>
+          <span id="progPct">0%</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="progBar" style="width:0%"></div>
+        </div>
+      </div>
+      <div class="q-area" id="qArea">
+        <p class="q-num" id="qNum">Question 1</p>
+        <p class="q-text" id="qText"></p>
+        <div class="options" id="opts"></div>
+      </div>
+    </div>
+
+    <!-- RESULT -->
+    <div id="resultScreen">
+      <p class="r-label">You are&hellip;</p>
+      <span class="r-emoji" id="rEmoji"></span>
+      <h2 class="r-name" id="rName"></h2>
+      <p class="r-tagline" id="rTagline"></p>
+      <div class="r-divider" id="rDivider"></div>
+      <p class="r-desc" id="rDesc"></p>
+      <div class="r-badge" id="rBadge"></div>
+      <br>
+      <button class="btn-restart" onclick="restartQuiz()">&larr; Take The Quiz Again</button>
+    </div>
+
+  </div><!-- /card -->
+</div><!-- /container -->
+
+<script>
+  /* ── Stars ── */
+  const starsEl = document.getElementById('stars');
+  for (let i = 0; i < 90; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    const sz = Math.random() * 2 + 1;
+    s.style.cssText = `width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;--dur:${(Math.random()*3+2).toFixed(1)}s;--delay:-${(Math.random()*4).toFixed(1)}s`;
+    starsEl.appendChild(s);
+  }
+
+  /* ── Data ── */
+  // operator indices: 0=BetBlast, 1=OddsWhisper, 2=QuickQuid, 3=SafeBet Gary
+  const questions = [
+    {
+      text: "Your app just went live. What's the first thing you slap on the homepage?",
+      options: [
+        "47 simultaneous pop-up bonus offers, each with a different countdown timer",
+        "A cryptic rotating logo on a black background. No other information. Just vibes.",
+        "A tiger doing a backflip next to a giant spinning wheel and the word 'BOOM'",
+        "A 900-word terms and conditions disclaimer. Users should understand the risks first."
+      ],
+      map: [0, 1, 2, 3]
+    },
+    {
+      text: "A customer has just lost 10 bets in a row. What's your next move?",
+      options: [
+        "Blast them with 14 separate 'exclusive free bet' emails over the next 40 minutes",
+        "Send one cryptic DM that reads only: 'The market remembers all.'",
+        "Text them a GIF of your tiger mascot giving a double thumbs-up in sunglasses",
+        "Immediately lock their account 'for their own protection' and post them a leaflet"
+      ],
+      map: [0, 1, 2, 3]
+    },
+    {
+      text: "What is your core odds philosophy?",
+      options: [
+        "We refresh the odds every 0.3 seconds — faster than the human eye can process",
+        "Our odds are... different. Curated. Considered. You probably wouldn't understand.",
+        "THE BEST ODDS IN THE ENTIRE KNOWN UNIVERSE (terms apply, universe not verified)",
+        "We offer 1.02 on almost everything. Predictability is a love language."
+      ],
+      map: [0, 1, 2, 3]
+    },
+    {
+      text: "Choose your marketing campaign tagline:",
+      options: [
+        "\"BET MORE. WIN SOMETIMES. RECEIVE EMAILS UNTIL THE HEAT DEATH OF THE UNIVERSE.\"",
+        "\"Odds. Life. Consequence.\" — shown over slow-motion footage of a foggy lake at dawn",
+        "\"TIGAAAAR!! YOU WILL NOT BELIEVE THESE PROMOS!! TONY IS ABSOLUTELY LOSING IT!!\"",
+        "\"We exist. You could place a small wager, if you feel comfortable doing so.\""
+      ],
+      map: [0, 1, 2, 3]
+    },
+    {
+      text: "A punter wins £500,000 on your platform. Your response?",
+      options: [
+        "Immediately serve them 23 personalised offers to 'make their winnings work for them'",
+        "Nod slowly from behind a mahogany desk and say, 'We knew.'",
+        "Their face. On a billboard. On a bus. On a blimp. On the app. Forever.",
+        "Gently ask if they're really sure they want to withdraw. Maybe sleep on it first?"
+      ],
+      map: [0, 1, 2, 3]
+    },
+    {
+      text: "How would you describe your customer support experience?",
+      options: [
+        "Live chat, email, phone, fax, and carrier pigeon — all staffed, all with a 4-hour wait",
+        "One email address. Replies only on the third Wednesday of each month. In haiku form.",
+        "Tony the Tiger handles all enquiries personally (this is definitely not a bot called Tony)",
+        "An automated system that, whatever you type, offers to close your account for safety"
+      ],
+      map: [0, 1, 2, 3]
+    },
+    {
+      text: "It's 11pm on a Friday. What's your push notification?",
+      options: [
+        "You have 11 unread bonus offers, 4 expiring free bets, and a mystery gift from 'The Team'",
+        "[No notification. Just a vague sense that something is happening on the platform.]",
+        "FRIDAY FRENZY IS HERE!! TONY IS LOSING HIS MIND!! THIS IS NOT A DRILL!!",
+        "A gentle reminder that gambling can affect sleep quality. Sweet dreams."
+      ],
+      map: [0, 1, 2, 3]
+    },
+    {
+      text: "What plays on your app's loading screen?",
+      options: [
+        "Six simultaneous countdown timers for deals expiring at slightly different times",
+        "A single candle flame on a black background. No music. Minimum 8 seconds.",
+        "An animated tiger shaking its hips to a full EDM drop. Every. Single. Time.",
+        "The words 'Are you sure you want to open this app?' with a Yes and a Cancel button"
+      ],
+      map: [0, 1, 2, 3]
+    }
+  ];
+
+  const operators = [
+    {
+      id: 'betblast',
+      theme: 't-betblast',
+      emoji: '💥',
+      name: 'BetBlast 3000',
+      tagline: '"More bonuses. More emails. More chaos. Always more."',
+      badge: 'Chaotic Neutral',
+      desc: `You are BetBlast 3000 — a beautiful, unhinged force of promotional nature. Your welcome bonus package contains 47 separate offers, none of which can be used simultaneously, and all of which expire in 23 hours. Your marketing team has "send another email" on a dedicated hotkey. Your UX designer quit in 2019 and honestly no one has noticed. You love your users with the desperate, smothering energy of someone who has never encountered the word 'boundaries.' Your push notification frequency has been described by regulators as 'technically legal.' You are vibrating at a frequency no human can perceive. You are beautiful. You are exhausting. You are BetBlast.`
+    },
+    {
+      id: 'oddswhisper',
+      theme: 't-oddswhisper',
+      emoji: '🌑',
+      name: 'OddsWhisper™',
+      tagline: '"The odds know. You will know. Eventually."',
+      badge: 'Mysteriously Sophisticated',
+      desc: `You are OddsWhisper™ — an entity that exists somewhere between a Zurich private bank and a very smug fortune cookie. Your website has won three design awards and contains almost no useful information. Your odds are genuinely excellent, which is, frankly, suspicious. Your brand guidelines consist of a single page that reads: 'dark, considered, inevitable.' You once sent a marketing email that was just a photograph of a fog-covered lake and the word 'Soon.' It had the highest open rate in company history. People find you either deeply compelling or quietly terrifying, and you have decided both outcomes are acceptable.`
+    },
+    {
+      id: 'quickquid',
+      theme: 't-quickquid',
+      emoji: '🐯',
+      name: 'QuickQuid Casino',
+      tagline: '"TONY ROARS. YOU WIN. EVERYONE WINS. (House always wins.)"',
+      badge: 'Lawful Chaotic',
+      desc: `You are QuickQuid Casino — specifically, you are Tony. You ARE the tiger. You didn't choose this life; this life chose you at a brand workshop in 2014 and you have been absolutely going for it ever since. Your colour palette is gold, orange, and 'more gold.' Every promotion contains the word MEGA, FRENZY, or ideally MEGA FRENZY SPECTACULAR. Your push notifications have been described by three separate journalists as 'legally aggressive.' You once put Tony on a blimp over a stadium during a Tuesday evening League One match and consider it the proudest moment in the company's corporate history. No regrets.`
+    },
+    {
+      id: 'gary',
+      theme: 't-gary',
+      emoji: '🛡️',
+      name: 'SafeBet Gary',
+      tagline: '"We\'re here if you need us. Please don\'t need us."',
+      badge: 'Lawful Anxious',
+      desc: `You are SafeBet Gary — and Gary is not merely a mascot; Gary is a state of being. You set a default bet limit of £2 and consider it a sincere act of love. Your homepage has seventeen responsible gambling links and a maximum of one game visible above the fold. Your loading screen asks users to confirm they are ready to proceed. Then it asks again. Your tagline was originally 'Bet With Confidence' but Gary had it changed to 'Bet If You're Sure, And Only If You've Had Enough Water Today.' You are the operator your GP would recommend. You are not the operator anyone wants on a Friday night. You have made your peace with this.`
+    }
+  ];
+
+  /* ── State ── */
+  let current = 0;
+  let scores = [0, 0, 0, 0];
+
+  /* ── Quiz flow ── */
+  function startQuiz() {
+    document.getElementById('introScreen').style.display = 'none';
+    document.getElementById('quizScreen').style.display = 'block';
+    renderQuestion();
+  }
+
+  function renderQuestion() {
+    const q     = questions[current];
+    const total = questions.length;
+    const pct   = Math.round((current / total) * 100);
+
+    document.getElementById('progLabel').textContent = `Question ${current + 1} of ${total}`;
+    document.getElementById('progPct').textContent   = `${pct}%`;
+    document.getElementById('progBar').style.width   = `${pct}%`;
+    document.getElementById('qNum').textContent      = `Question ${current + 1}`;
+    document.getElementById('qText').textContent     = q.text;
+
+    const grid   = document.getElementById('opts');
+    grid.innerHTML = '';
+    const labels = ['A','B','C','D'];
+
+    q.options.forEach((text, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'opt-btn';
+      btn.innerHTML = `<span class="opt-letter">${labels[i]}</span><span>${text}</span>`;
+      btn.onclick   = () => pick(q.map[i], btn);
+      grid.appendChild(btn);
+    });
+  }
+
+  function pick(opIdx, btn) {
+    // Disable all options
+    document.querySelectorAll('.opt-btn').forEach(b => {
+      b.style.pointerEvents = 'none';
+      b.style.opacity = '0.45';
+    });
+    btn.style.opacity = '1';
+    btn.classList.add('selected');
+
+    scores[opIdx]++;
+
+    setTimeout(() => {
+      if (current < questions.length - 1) {
+        const area = document.getElementById('qArea');
+        area.classList.add('exit');
+        setTimeout(() => {
+          current++;
+          renderQuestion();
+          area.classList.remove('exit');
+        }, 280);
+      } else {
+        showResult();
+      }
+    }, 480);
+  }
+
+  function showResult() {
+    // Find highest score (tiebreak: last index wins, giving Gary a fighting chance)
+    let best = -1, winner = 0;
+    scores.forEach((s, i) => { if (s >= best) { best = s; winner = i; } });
+
+    const op = operators[winner];
+
+    document.getElementById('quizScreen').style.display = 'none';
+    document.getElementById('siteHeader').style.opacity = '0.3';
+
+    const rs = document.getElementById('resultScreen');
+    rs.className = `r-screen ${op.theme}`;
+
+    document.getElementById('rEmoji').textContent   = op.emoji;
+    document.getElementById('rName').textContent    = op.name;
+    document.getElementById('rTagline').textContent = op.tagline;
+    document.getElementById('rDesc').textContent    = op.desc;
+    document.getElementById('rBadge').textContent   = op.badge;
+
+    rs.style.display = 'block';
+    // Tiny delay so the animation triggers cleanly
+    requestAnimationFrame(() => requestAnimationFrame(() => rs.classList.add('show')));
+
+    launchConfetti();
+  }
+
+  function restartQuiz() {
+    current = 0;
+    scores  = [0, 0, 0, 0];
+
+    const rs = document.getElementById('resultScreen');
+    rs.classList.remove('show');
+    rs.style.display = 'none';
+
+    document.getElementById('siteHeader').style.opacity = '1';
+    document.getElementById('quizScreen').style.display = 'none';
+    document.getElementById('introScreen').style.display = 'block';
+    document.getElementById('progBar').style.width = '0%';
+  }
+
+  /* ── Confetti ── */
+  function launchConfetti() {
+    const palette = ['#ff2d78','#00f5ff','#ffd700','#39ff14','#a78bfa','#ff6b35','#fff'];
+    for (let i = 0; i < 70; i++) {
+      setTimeout(() => {
+        const el = document.createElement('div');
+        el.className = 'confetti';
+        const size = Math.random() * 9 + 5;
+        el.style.cssText = `
+          left:${Math.random()*100}vw;
+          width:${size}px;height:${size}px;
+          background:${palette[Math.floor(Math.random()*palette.length)]};
+          border-radius:${Math.random() > 0.45 ? '50%' : '2px'};
+          animation-duration:${(Math.random()*2.2+1.8).toFixed(2)}s;
+          animation-delay:${(Math.random()*0.6).toFixed(2)}s;
+        `;
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 4500);
+      }, i * 28);
+    }
+  }
+</script>
+</body>
+</html>
