@@ -64,12 +64,24 @@
       background: linear-gradient(135deg, var(--pink), var(--cyan));
       -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
     }
-    .nav-back {
-      font-size: 0.82rem; color: var(--muted);
-      display: flex; align-items: center; gap: 6px;
-      transition: color 0.2s; cursor: pointer;
+    .nav-links { display: flex; align-items: center; gap: 24px; }
+    .nav-link { font-size: 0.83rem; font-weight: 500; color: var(--muted); transition: color 0.2s; }
+    .nav-link:hover { color: #fff; }
+    .nav-link.active { color: #fff; }
+    .nav-cta {
+      background: linear-gradient(135deg, var(--cyan), #0099cc);
+      border: none; border-radius: 9px;
+      padding: 8px 18px;
+      color: #07071a; font-family: 'Inter', sans-serif;
+      font-size: 0.83rem; font-weight: 700; letter-spacing: 0.05em;
+      cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 0 20px rgba(0,245,255,0.25);
     }
-    .nav-back:hover { color: #fff; }
+    .nav-cta:hover { transform: translateY(-2px); box-shadow: 0 0 36px rgba(0,245,255,0.45); }
+    @media (max-width: 600px) {
+      .nav-links .nav-link { display: none; }
+      nav { padding: 0 18px; }
+    }
 
     /* ── PAGE WRAPPER ── */
     .page {
@@ -387,7 +399,12 @@
 <!-- NAV -->
 <nav>
   <a href="index.html" class="nav-logo">BetMatch</a>
-  <a href="index.html" class="nav-back">&#8592; Back to home</a>
+  <div class="nav-links">
+    <a href="index.html" class="nav-link">Home</a>
+    <a href="operator-finder.html" class="nav-link active">Operator Finder</a>
+    <a href="which-betting-operator-are-you.html" class="nav-link">Fun Quiz</a>
+    <a href="operator-finder.html" class="nav-cta">Find My Operator &rarr;</a>
+  </div>
 </nav>
 
 <!-- PAGE -->
