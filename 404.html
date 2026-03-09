@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Page Not Found — BetMatch</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <meta name="robots" content="noindex">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+  <script src="nav.js"></script>
+  <style>
+    :root {
+      --pink: #ff2d78; --cyan: #00f5ff; --gold: #ffd700;
+      --bg: #07071a; --card: #0d0d2b; --border: rgba(255,255,255,0.07); --muted: #777799;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif; background: var(--bg); color: #fff;
+      min-height: 100vh; overflow-x: hidden;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 80px 24px;
+    }
+
+    .blobs {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background:
+        radial-gradient(ellipse at 20% 50%, rgba(255,45,120,0.06) 0%, transparent 55%),
+        radial-gradient(ellipse at 80% 40%, rgba(0,245,255,0.05) 0%, transparent 55%);
+    }
+
+    .wrap {
+      position: relative; z-index: 1;
+      text-align: center; max-width: 560px;
+    }
+
+    .err-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(7rem, 25vw, 14rem);
+      line-height: 0.88;
+      background: linear-gradient(135deg, var(--pink) 0%, var(--gold) 50%, var(--cyan) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      opacity: 0.18;
+      margin-bottom: 24px;
+    }
+
+    .err-icon {
+      font-size: 4rem; display: block;
+      margin-bottom: 20px;
+      animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%,100% { transform: translateY(0) rotate(-4deg); }
+      50%      { transform: translateY(-10px) rotate(4deg); }
+    }
+
+    h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2rem, 6vw, 3rem);
+      margin-bottom: 14px;
+    }
+
+    p {
+      font-size: 1rem; color: var(--muted); line-height: 1.8;
+      margin-bottom: 36px;
+    }
+
+    .btns {
+      display: flex; flex-wrap: wrap; gap: 14px; justify-content: center;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--pink), #c0006e);
+      border: none; border-radius: 13px; padding: 14px 34px;
+      color: #fff; font-family: 'Inter', sans-serif;
+      font-size: 0.97rem; font-weight: 700; letter-spacing: 0.05em;
+      cursor: pointer; display: inline-block; text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 0 36px rgba(255,45,120,0.35);
+    }
+    .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 0 60px rgba(255,45,120,0.55); }
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.18); border-radius: 13px;
+      padding: 14px 28px;
+      color: rgba(255,255,255,0.6); font-family: 'Inter', sans-serif;
+      font-size: 0.97rem; font-weight: 600; display: inline-block; text-decoration: none;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .btn-ghost:hover { border-color: var(--cyan); color: var(--cyan); }
+  </style>
+</head>
+<body>
+
+<div class="blobs"></div>
+
+<div class="wrap">
+  <div class="err-num">404</div>
+  <span class="err-icon">🎯</span>
+  <h1>Wrong Odds, Wrong Page</h1>
+  <p>
+    That page doesn't exist — but your perfect betting operator does.
+    Let's get you back somewhere useful.
+  </p>
+  <div class="btns">
+    <a href="index.html" class="btn-ghost">&larr; Back to Home</a>
+    <a href="operator-finder.html" class="btn-primary">Find My Operator &rarr;</a>
+  </div>
+</div>
+
+</body>
+</html>

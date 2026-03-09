@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Responsible Gambling — BetMatch</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <meta name="description" content="Responsible gambling resources and support links. If gambling is affecting you or someone you know, free, confidential help is available 24/7.">
+  <meta property="og:title" content="Responsible Gambling — BetMatch">
+  <meta property="og:description" content="Free, confidential gambling support is available 24/7. BetMatch is committed to promoting responsible gambling.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://bet-match.us/responsible-gambling.html">
+  <meta name="twitter:card" content="summary">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+  <script src="nav.js"></script>
+  <style>
+    :root {
+      --pink: #ff2d78; --cyan: #00f5ff; --gold: #ffd700; --purple: #a78bfa;
+      --green: #4ade80;
+      --bg: #07071a; --card: #0d0d2b; --border: rgba(255,255,255,0.07); --muted: #777799;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: #fff; overflow-x: hidden; }
+
+    .blobs {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background:
+        radial-gradient(ellipse at 10% 40%, rgba(74,222,128,0.05) 0%, transparent 55%),
+        radial-gradient(ellipse at 90% 10%, rgba(0,245,255,0.04) 0%, transparent 50%);
+    }
+
+    .page-wrap {
+      position: relative; z-index: 1;
+      max-width: 820px; margin: 0 auto;
+      padding: 120px 24px 80px;
+    }
+
+    /* Alert banner */
+    .help-banner {
+      background: rgba(74,222,128,0.08);
+      border: 1px solid rgba(74,222,128,0.25);
+      border-radius: 18px;
+      padding: 28px 28px;
+      margin-bottom: 52px;
+      display: flex; gap: 20px; align-items: flex-start;
+    }
+    .help-banner-icon { font-size: 2rem; flex-shrink: 0; }
+    .help-banner h2 {
+      font-size: 1.1rem; font-weight: 800; margin-bottom: 8px; color: var(--green);
+    }
+    .help-banner p {
+      font-size: 0.93rem; color: rgba(255,255,255,0.65); line-height: 1.7; margin: 0;
+    }
+    .help-banner p strong { color: var(--green); }
+    .help-banner a { color: var(--green); text-decoration: none; }
+    .help-banner a:hover { text-decoration: underline; }
+
+    .eyebrow {
+      display: block;
+      font-size: 0.7rem; letter-spacing: 0.3em; text-transform: uppercase;
+      color: var(--cyan); margin-bottom: 14px;
+    }
+    h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.4rem, 7vw, 4rem);
+      line-height: 1; margin-bottom: 20px;
+    }
+    .lead {
+      font-size: 1rem; line-height: 1.8; color: #9999bb;
+      max-width: 640px; margin-bottom: 44px;
+    }
+    .line-accent {
+      width: 52px; height: 3px; border-radius: 99px;
+      background: linear-gradient(90deg, var(--green), var(--cyan));
+      margin-bottom: 44px;
+    }
+
+    h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.9rem; color: #fff;
+      margin: 48px 0 18px;
+    }
+    p {
+      font-size: 0.96rem; line-height: 1.85; color: #9999bb; margin-bottom: 16px;
+    }
+    p strong { color: #fff; }
+    a { color: var(--cyan); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* Resource cards */
+    .resource-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px; margin-top: 24px;
+    }
+    .resource-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+      padding: 24px 22px; display: flex; gap: 16px; align-items: flex-start;
+      transition: border-color 0.2s, transform 0.2s;
+      text-decoration: none;
+    }
+    .resource-card:hover {
+      border-color: rgba(255,255,255,0.18);
+      transform: translateY(-3px);
+      text-decoration: none;
+    }
+    .resource-icon {
+      flex-shrink: 0; width: 44px; height: 44px; border-radius: 11px;
+      display: flex; align-items: center; justify-content: center; font-size: 1.3rem;
+    }
+    .resource-card h3 { font-size: 0.97rem; font-weight: 700; margin-bottom: 4px; color: #fff; }
+    .resource-card .resource-url {
+      font-size: 0.78rem; color: var(--cyan); margin-bottom: 8px;
+      display: block;
+    }
+    .resource-card p { font-size: 0.84rem; color: var(--muted); line-height: 1.6; margin: 0; }
+
+    /* Warning signs */
+    .signs-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 14px; margin-top: 20px;
+    }
+    .sign-item {
+      background: var(--card); border: 1px solid rgba(255,45,120,0.1); border-radius: 13px;
+      padding: 16px 18px; display: flex; gap: 12px; align-items: flex-start;
+    }
+    .sign-item::before {
+      content: '⚠';
+      font-size: 1rem; flex-shrink: 0; opacity: 0.5; margin-top: 1px;
+    }
+    .sign-item p { font-size: 0.86rem; color: var(--muted); line-height: 1.6; margin: 0; }
+
+    /* Tips */
+    .tips { list-style: none; padding: 0; margin-top: 20px; display: grid; gap: 10px; }
+    .tips li {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      padding: 14px 18px; font-size: 0.9rem; color: #9999bb; line-height: 1.6;
+      display: flex; gap: 12px; align-items: flex-start;
+    }
+    .tips li .tip-icon { flex-shrink: 0; font-size: 1.1rem; }
+  </style>
+</head>
+<body>
+
+<div class="blobs"></div>
+
+<div class="page-wrap">
+
+  <div class="help-banner">
+    <span class="help-banner-icon">🛡️</span>
+    <div>
+      <h2>Need help right now?</h2>
+      <p>
+        The National Gambling Helpline is free, confidential, and available <strong>24 hours a day, 7 days a week</strong>:
+        <strong><a href="tel:08088020133">0808 8020 133</a></strong>. You can also visit
+        <a href="https://www.begambleaware.org" target="_blank" rel="noopener noreferrer">begambleaware.org</a>
+        for immediate online support.
+      </p>
+    </div>
+  </div>
+
+  <span class="eyebrow">Responsible Gambling</span>
+  <h1>Gambling Should Be Enjoyable. Here's How to Keep It That Way.</h1>
+  <p class="lead">
+    BetMatch is a tool for finding the right operator — not a tool for encouraging more gambling. This page
+    exists because we think responsible gambling information belongs on every site in this space, not just on
+    the operators themselves.
+  </p>
+  <div class="line-accent"></div>
+
+  <p>
+    <strong>BetMatch is for entertainment purposes only.</strong> We are not a licensed gambling operator and
+    we do not facilitate gambling of any kind. If you are experiencing problems with gambling, please use the
+    resources below.
+  </p>
+
+  <h2>Warning Signs to Watch For</h2>
+  <p>
+    Problem gambling can develop gradually. These are some signs that gambling may be becoming a concern:
+  </p>
+  <div class="signs-grid">
+    <div class="sign-item"><p>Spending more time or money gambling than you planned or can afford</p></div>
+    <div class="sign-item"><p>Chasing losses — continuing to bet to try to win back money you've lost</p></div>
+    <div class="sign-item"><p>Gambling interfering with work, relationships, or daily responsibilities</p></div>
+    <div class="sign-item"><p>Borrowing money or selling possessions to fund gambling</p></div>
+    <div class="sign-item"><p>Feeling restless, irritable, or anxious when you try to stop</p></div>
+    <div class="sign-item"><p>Hiding the extent of your gambling from friends or family</p></div>
+  </div>
+
+  <h2>UK Support Organisations</h2>
+  <p>
+    All of the following services are free and confidential. No referral is needed.
+  </p>
+  <div class="resource-grid">
+    <a href="https://www.begambleaware.org" target="_blank" rel="noopener noreferrer" class="resource-card">
+      <div class="resource-icon" style="background:rgba(74,222,128,0.1);">🌱</div>
+      <div>
+        <h3>BeGambleAware</h3>
+        <span class="resource-url">begambleaware.org</span>
+        <p>The UK's leading charity for gambling harm prevention. Online chat, self-assessment tools, and treatment referrals.</p>
+      </div>
+    </a>
+    <a href="https://www.gamcare.org.uk" target="_blank" rel="noopener noreferrer" class="resource-card">
+      <div class="resource-icon" style="background:rgba(0,245,255,0.1);">💬</div>
+      <div>
+        <h3>GamCare</h3>
+        <span class="resource-url">gamcare.org.uk &middot; 0808 8020 133</span>
+        <p>Runs the National Gambling Helpline. Free counselling, live chat support, and a peer forum.</p>
+      </div>
+    </a>
+    <a href="https://www.gamstop.co.uk" target="_blank" rel="noopener noreferrer" class="resource-card">
+      <div class="resource-icon" style="background:rgba(255,215,0,0.1);">🔒</div>
+      <div>
+        <h3>GamStop</h3>
+        <span class="resource-url">gamstop.co.uk</span>
+        <p>The UK's national self-exclusion scheme. Register once to block yourself from all UK-licensed gambling sites and apps.</p>
+      </div>
+    </a>
+    <a href="https://www.gamblingtherapy.org" target="_blank" rel="noopener noreferrer" class="resource-card">
+      <div class="resource-icon" style="background:rgba(167,139,250,0.1);">🌍</div>
+      <div>
+        <h3>Gambling Therapy</h3>
+        <span class="resource-url">gamblingtherapy.org</span>
+        <p>Free online support available worldwide. Offers live chat, a forum, and self-help tools in multiple languages.</p>
+      </div>
+    </a>
+    <a href="https://www.nhs.uk/live-well/addiction-support/gambling-addiction" target="_blank" rel="noopener noreferrer" class="resource-card">
+      <div class="resource-icon" style="background:rgba(0,245,255,0.08);">🏥</div>
+      <div>
+        <h3>NHS</h3>
+        <span class="resource-url">nhs.uk</span>
+        <p>Information on gambling disorder and NHS treatment options, including referral to specialist services via your GP.</p>
+      </div>
+    </a>
+    <a href="https://www.gordonmoody.org.uk" target="_blank" rel="noopener noreferrer" class="resource-card">
+      <div class="resource-icon" style="background:rgba(255,45,120,0.08);">🏠</div>
+      <div>
+        <h3>Gordon Moody</h3>
+        <span class="resource-url">gordonmoody.org.uk</span>
+        <p>Residential treatment and therapy for people seriously affected by gambling addiction.</p>
+      </div>
+    </a>
+  </div>
+
+  <h2>Tips for Safer Play</h2>
+  <ul class="tips">
+    <li><span class="tip-icon">💰</span>Set a budget before you start and treat it as the cost of entertainment — money you're comfortable losing.</li>
+    <li><span class="tip-icon">⏱️</span>Set a time limit and stick to it. Use your operator's built-in session limit tools if they're available.</li>
+    <li><span class="tip-icon">🎯</span>Only gamble on licensed UK operators. Licensed operators are required to provide responsible gambling tools including deposit limits, cooling-off periods, and self-exclusion.</li>
+    <li><span class="tip-icon">🚫</span>Never chase losses. The odds don't change based on what you've lost — each bet is independent.</li>
+    <li><span class="tip-icon">🍺</span>Don't gamble when you're drunk, stressed, or upset. Emotional states impair judgement and can lead to bets you'd never make otherwise.</li>
+    <li><span class="tip-icon">📊</span>Keep a record. Many problem gamblers underestimate how much they're spending. Tracking your bets makes the real number visible.</li>
+  </ul>
+
+  <h2>Self-Exclusion</h2>
+  <p>
+    If you want to stop gambling, <strong>GamStop</strong> is the fastest and most effective tool available.
+    Registering at <a href="https://www.gamstop.co.uk" target="_blank" rel="noopener noreferrer">gamstop.co.uk</a>
+    will block you from all UK-licensed gambling websites and apps for a minimum of six months, up to five years.
+    It's free and takes minutes to set up.
+  </p>
+  <p>
+    Individual operators also offer self-exclusion tools directly in their accounts section. These apply only
+    to that specific operator, which is why GamStop (which covers all licensed operators at once) is
+    generally the more effective option.
+  </p>
+
+</div>
+</body>
+</html>
