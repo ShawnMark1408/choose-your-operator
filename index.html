@@ -360,6 +360,32 @@
     .tool-btn-secondary:hover { background: rgba(255,45,120,0.18); transform: translateY(-2px); }
     .tool-meta { font-size: 0.75rem; color: rgba(255,255,255,0.25); text-align: center; }
 
+    /* ── Find us section ── */
+    .findus-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+    }
+    .findus-card {
+      background: var(--card);
+      border: 1px solid var(--border); border-radius: 16px;
+      padding: 22px 20px;
+      display: flex; flex-direction: column; gap: 10px;
+      transition: border-color 0.2s, transform 0.2s;
+      text-decoration: none; color: inherit;
+    }
+    .findus-card:hover { border-color: rgba(255,255,255,0.2); transform: translateY(-3px); }
+    .findus-platform {
+      font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.22em;
+      font-weight: 700;
+    }
+    .findus-title { font-size: 0.95rem; font-weight: 700; line-height: 1.35; }
+    .findus-url {
+      font-size: 0.78rem; color: var(--muted);
+      word-break: break-all; line-height: 1.4;
+    }
+    .findus-arrow { font-size: 0.85rem; margin-top: auto; padding-top: 6px; }
+
     /* Divider line accent */
     .line-accent {
       width: 52px; height: 3px; border-radius: 99px;
@@ -561,6 +587,49 @@
           <p>Your priorities change. Retake whenever you like — no logins, no friction, no pressure.</p>
         </div>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- FIND US -->
+<section style="padding-top:0;">
+  <div class="inner">
+    <p class="s-eye fi">Passion project</p>
+    <h2 class="s-head fi">Built for Bettors,<br>by a Bettor</h2>
+    <p class="s-sub fi">
+      BetMatch is an independent passion project — no operator affiliations, no paid placements, no agenda beyond helping people find a platform that actually suits them.
+      The tools are free, open, and available across several platforms. If you find them useful, share them.
+    </p>
+    <div class="findus-grid">
+
+      <a href="https://shawnmark1408.github.io/choose-your-operator/" target="_blank" rel="noopener noreferrer" class="findus-card fi d1">
+        <div class="findus-platform" style="color:var(--cyan);">GitHub Pages</div>
+        <div class="findus-title">BetMatch — Full Site</div>
+        <div class="findus-url">shawnmark1408.github.io/choose-your-operator</div>
+        <div class="findus-arrow" style="color:var(--cyan);">Visit &rarr;</div>
+      </a>
+
+      <a href="https://which-operator-are-you.vercel.app/" target="_blank" rel="noopener noreferrer" class="findus-card fi d2">
+        <div class="findus-platform" style="color:var(--purple);">Vercel</div>
+        <div class="findus-title">Which Operator Are You?</div>
+        <div class="findus-url">which-operator-are-you.vercel.app</div>
+        <div class="findus-arrow" style="color:var(--purple);">Visit &rarr;</div>
+      </a>
+
+      <a href="https://claude.ai/public/artifacts/9ab6301a-cc43-4a8f-8c58-ed28aa68b182" target="_blank" rel="noopener noreferrer" class="findus-card fi d3">
+        <div class="findus-platform" style="color:var(--pink);">Claude Artifact</div>
+        <div class="findus-title">Operator Finder — Interactive App</div>
+        <div class="findus-url">claude.ai/public/artifacts/9ab6301a&hellip;</div>
+        <div class="findus-arrow" style="color:var(--pink);">Visit &rarr;</div>
+      </a>
+
+      <a href="https://github.com/ShawnMark1408/choose-your-operator" target="_blank" rel="noopener noreferrer" class="findus-card fi d4">
+        <div class="findus-platform" style="color:var(--gold);">GitHub</div>
+        <div class="findus-title">Source Code — Open &amp; Free</div>
+        <div class="findus-url">github.com/ShawnMark1408/choose-your-operator</div>
+        <div class="findus-arrow" style="color:var(--gold);">View repo &rarr;</div>
+      </a>
+
     </div>
   </div>
 </section>
